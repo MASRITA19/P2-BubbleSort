@@ -1,0 +1,34 @@
+name: SonarCloud Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          curl -sL https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip > build-wrapper.zip
+          unzip build-wrapper.zip -d ./build-wrapper
+          sonar-scanner \
+            -Dsonar.organization=MASRITA_MANGALARAPU \
+            -Dsonar.projectKey= cf0a91e2787728c78618370b2791934d600f84ee\
+            -Dsonar.python.version=3.8
